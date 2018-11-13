@@ -1,0 +1,13 @@
+cxx_binary(
+  name = 'socks5-proxy', 
+  header_namespace = '', 
+  headers = glob([
+    '*.h', 
+  ]), 
+  srcs = glob([
+    '*.c', 
+  ]), 
+  deps = [
+    '//:libuv', 
+  ], 
+)

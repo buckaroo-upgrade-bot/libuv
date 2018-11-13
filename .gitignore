@@ -77,3 +77,9 @@ ipch
 
 # make dist output
 libuv-*.tar.*
+
+# Buck
+.buckd
+buck-out
+BUCKAROO_DEPS
+.buckconfig.local
