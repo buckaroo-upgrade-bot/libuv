@@ -33,7 +33,7 @@ windows_srcs = glob([
 ])
 
 cxx_library(
-  name = 'libuv',
+  name = 'uv',
   header_namespace = '',
   exported_headers = subdir_glob([
     ('include', '**/*.h'),
@@ -89,7 +89,7 @@ cxx_binary(
     ('windows.*', glob(['test/*-win.c'])),
   ],
   deps = [
-    ':libuv',
+    ':uv',
   ],
 )
 
@@ -123,6 +123,6 @@ cxx_binary(
     ('windows.*', glob(['test/*-win.c'])),
   ],
   deps = [
-    ':libuv',
+    ':uv',
   ],
 )
