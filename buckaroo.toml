@@ -1,1 +1,1 @@
-targets = [ "//:libuv" ]
+targets = [ "//:uv" ]
