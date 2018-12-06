@@ -1,12 +1,39 @@
+load('//:subdir_glob.bzl', 'subdir_glob')
+
+prebuilt_cxx_library(
+  name = 'pthread', 
+  header_namespace = '', 
+  header_only = True, 
+  exported_linker_flags = [
+    '-lpthread', 
+  ], 
+)
+
+prebuilt_cxx_library(
+  name = 'dl', 
+  header_namespace = '', 
+  header_only = True, 
+  exported_linker_flags = [
+    '-ldl', 
+  ], 
+)
+
+prebuilt_cxx_library(
+  name = 'util', 
+  header_namespace = '', 
+  header_only = True, 
+  exported_linker_flags = [
+    '-lutil', 
+  ], 
+)
+
 unix_srcs = [
   'src/unix/async.c',
   'src/unix/core.c',
   'src/unix/dl.c',
   'src/unix/fs.c',
-  'src/unix/fsevents.c',
   'src/unix/getaddrinfo.c',
   'src/unix/getnameinfo.c',
-  'src/unix/kqueue.c',
   'src/unix/loop-watcher.c',
   'src/unix/loop.c',
   'src/unix/pipe.c',
@@ -22,7 +49,16 @@ unix_srcs = [
   'src/unix/udp.c'
 ]
 
+linux_srcs = unix_srcs + glob([
+  'src/unix/linux-*.c', 
+  'src/unix/procfs-exepath.c', 
+  'src/unix/sysinfo-loadavg.c', 
+  'src/unix/sysinfo-memory.c', 
+])
+
 macos_srcs = unix_srcs + [
+  'src/unix/kqueue.c',
+  'src/unix/fsevents.c', 
   'src/unix/darwin.c', 
   'src/unix/darwin-proctitle.c', 
   'src/unix/bsd-ifaddrs.c', 
@@ -52,9 +88,12 @@ cxx_library(
   ]),
   platform_srcs = [
     ('macos.*', macos_srcs),
-    ('linux.*', unix_srcs),
+    ('linux.*', linux_srcs),
     ('windows.*', windows_srcs),
   ],
+  platform_deps = [
+    ('linux.*', [ ':pthread', ':dl', ':util' ]), 
+  ], 
   visibility = [
     'PUBLIC',
   ],
@@ -67,7 +106,6 @@ cxx_binary(
     ('test', 'runner.h'),
   ]),
   platform_headers = [
-    ('default', glob(['test/*-unix.h'])),
     ('macos.*', glob(['test/*-unix.h'])),
     ('linux.*', glob(['test/*-unix.h'])),
     ('windows.*', glob(['test/*-win.h'])),
@@ -78,12 +116,11 @@ cxx_binary(
     'test/echo-server.c',
     'test/test-*.c',
   ], 
-  excludes = glob([
+  exclude = glob([
     'test/*-unix.c',
     'test/*-win.c',
   ])),
   platform_srcs = [
-    ('default', glob(['test/*-unix.c'])),
     ('macos.*', glob(['test/*-unix.c'])),
     ('linux.*', glob(['test/*-unix.c'])),
     ('windows.*', glob(['test/*-win.c'])),
@@ -100,7 +137,6 @@ cxx_binary(
     ('test', 'runner.h'),
   ]),
   platform_headers = [
-    ('default', glob(['test/*-unix.h'])),
     ('macos.*', glob(['test/*-unix.h'])),
     ('linux.*', glob(['test/*-unix.h'])),
     ('windows.*', glob(['test/*-win.h'])),
@@ -112,12 +148,11 @@ cxx_binary(
     'test/echo-server.c',
     'test/benchmark-*.c',
   ], 
-  excludes = glob([
+  exclude = glob([
     'test/*-unix.c',
     'test/*-win.c',
   ])),
   platform_srcs = [
-    ('default', glob(['test/*-unix.c'])),
     ('macos.*', glob(['test/*-unix.c'])),
     ('linux.*', glob(['test/*-unix.c'])),
     ('windows.*', glob(['test/*-win.c'])),

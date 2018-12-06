@@ -1,6 +1,17 @@
 [project]
   ignore = .git
 
+[parser]
+  default_build_file_syntax = SKYLARK
+
 [cxx]
   should_remap_host_platform = true
-  cxxflags = "-std=c11"
+  cflags = -std=c11
+  cxxflags = -std=c++11
+
+[cxx#linux-x86_64]
+  should_remap_host_platform = true
+  untracked_headers = warn
+  untracked_headers_whitelist = /usr/include/.*, /usr/lib/gcc/.*
+  cflags = -std=c11 -D_GNU_SOURCE
+  cxxflags = -std=c++11
